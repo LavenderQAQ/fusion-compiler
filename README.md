@@ -3,4 +3,4 @@
 ## Roadmap
 
 - [x] Lexer
-- [ ] Parser
+- [x] Parser
