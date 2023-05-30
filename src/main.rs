@@ -1,3 +1,4 @@
+use crate::ast::evaluator::ASTEvaluator;
 use crate::ast::lexer::Lexer;
 use crate::ast::parser::Parser;
 use crate::ast::Ast;
@@ -5,7 +6,7 @@ use crate::ast::Ast;
 mod ast;
 
 fn main() {
-    let input = "6 + (7 * 8)";
+    let input = "(7 - 8) * -1";
 
     let mut lexer = Lexer::new(input);
     let mut tokens = Vec::new();
@@ -22,4 +23,7 @@ fn main() {
     }
 
     ast.visualize();
+    let mut eval = ASTEvaluator::new();
+    ast.visit(&mut eval);
+    println!("Result: {}", eval.last_value.unwrap());
 }

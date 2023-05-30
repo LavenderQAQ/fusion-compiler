@@ -1,5 +1,6 @@
 use self::lexer::Token;
 
+pub mod evaluator;
 pub mod lexer;
 pub mod parser;
 
@@ -36,7 +37,9 @@ pub trait ASTVisitor {
             ASTStatementKind::Expression(expr) => self.visit_expression(expr),
         }
     }
-    fn visit_statement(&mut self, statement: &ASTStatement);
+    fn visit_statement(&mut self, statement: &ASTStatement) {
+        self.do_visit_statement(statement);
+    }
     fn do_visit_expression(&mut self, expression: &ASTExpression) {
         match &expression.kind {
             ASTExpressionKind::Number(number) => self.visit_number(number),
@@ -48,13 +51,20 @@ pub trait ASTVisitor {
             }
         }
     }
-    fn visit_expression(&mut self, expression: &ASTExpression);
+    fn visit_expression(&mut self, expression: &ASTExpression) {
+        self.do_visit_expression(expression);
+    }
     fn visit_number(&mut self, expression: &ASTNumberExpression);
-    fn visit_binary_expression(&mut self, binary_expression: &ASTBinaryExpression);
+    fn visit_binary_expression(&mut self, binary_expression: &ASTBinaryExpression) {
+        self.visit_expression(&binary_expression.left);
+        self.visit_expression(&binary_expression.right);
+    }
     fn visit_parenthesized_expression(
         &mut self,
         parenthesized_expression: &ASTParenthesizedExpression,
-    );
+    ) {
+        self.visit_expression(&parenthesized_expression.expression);
+    }
 }
 
 pub struct ASTPrinter {
